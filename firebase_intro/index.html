@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Firebase</title>
+</head>
+
+<body>
+    <h1>Introduction to Firebase</h1>
+    <div class="flex rounded"></div>
+
+    <button id="test">signup</button>
+    <button id="login-btn">login</button>
+    <button id="logout-btn">logout</button>
+</body>
+<script type="module">
+    // initializeApp: establish connection with the firebase app
+    // getAuth:   establish connection with the firebase app's authentication
+    // createUserWithEmailAndPassword:   signup
+    // signinWithEmailAndPassword:   login
+    // emailVerification:   login
+
+    // querysnapshot
+    // docRef
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js"
+    // import { getFirestore } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB10RG7PzHJlchC3twXtY3mJ2N3u7RsBKE",
+        authDomain: "instagram-7b2d4.firebaseapp.com",
+        projectId: "instagram-7b2d4",
+        storageBucket: "instagram-7b2d4.firebasestorage.app",
+        messagingSenderId: "407362630532",
+        appId: "1:407362630532:web:4c78832c35d9a0f0f6a3d1"
+    };
+
+    const app = initializeApp(firebaseConfig)
+    const auth = getAuth(app)
+
+    // ELEMENTS
+    const testEl = document.getElementById("test")
+    const logoutBtnEl = document.getElementById("logout-btn")
+    const loginBtnEl = document.getElementById("login-btn")
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            console.log(user)
+        } else {
+            console.log("no current user")
+        }
+    })
+
+    const signup = async () => {
+        console.log("signing up...")
+        try {
+            const userCredentials = await createUserWithEmailAndPassword(auth, "peter.babs.dev@gmail.com", "Test1234.")
+            console.log(userCredentials)
+            console.log(userCredentials.user)
+            if (userCredentials.user) {
+                sendEmailVerification(userCredentials.user)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    const signin = async () => {
+        console.log("loging in...")
+        try {
+            const userCredentials = await signInWithEmailAndPassword(auth, "james@gmail.com", "123456")
+            console.log(userCredentials)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+
+    const logout = async () => {
+        console.log("ending session...")
+        try {
+            await signOut(auth)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONe!")
+        }
+    }
+
+    testEl.addEventListener("click", signup)
+    logoutBtnEl.addEventListener("click", logout)
+    loginBtnEl.addEventListener("click", signin)
+
+</script>
+
+</html>
