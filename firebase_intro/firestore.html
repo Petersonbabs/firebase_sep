@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Firestore (DATABASE)</title>
+</head>
+
+<body>
+    <h1>Firebase Firestore (DATABASE)</h1>
+    <button id="add-user">Add User</button>
+
+    <div id="users"></div>
+</body>
+
+<script type="module">
+
+    // getFirestore:  establish connection with the firebase app's database
+    // collection: create a collection reference
+    // addDoc: add a document into a collection
+    // getDocs: get all/multiple documents in a collection
+
+    // doc: create a document reference
+    // getDoc: get a single document
+    // updateDoc: update a single document
+    // deleteDoc: delete a single document
+    // setDoc: update/replace/create a document using a doc reference
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB10RG7PzHJlchC3twXtY3mJ2N3u7RsBKE",
+        authDomain: "instagram-7b2d4.firebaseapp.com",
+        projectId: "instagram-7b2d4",
+        storageBucket: "instagram-7b2d4.firebasestorage.app",
+        messagingSenderId: "407362630532",
+        appId: "1:407362630532:web:4c78832c35d9a0f0f6a3d1"
+    };
+
+    const app = initializeApp(firebaseConfig)
+    const DB = getFirestore(app)
+    const usersColRef = collection(DB, "users")
+
+    const adduserBtnEl = document.getElementById("add-user")
+    const usersEl = document.getElementById("users")
+
+    const addUser = async () => {
+        console.log("adding user...")
+        const userData = { name: "Kenny doe", age: 36, email: "kenny@gmal.com", gender: "male" }
+        try {
+            const docRef = await addDoc(usersColRef, userData)
+            console.log(docRef)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("Done!")
+        }
+    }
+
+    adduserBtnEl.addEventListener("click", addUser)
+
+    const getAllUsers = async () => {
+        console.log("Fetching users...")
+        try {
+            // querySnapShot
+            const querySnapShot = await getDocs(usersColRef)
+            querySnapShot.forEach((doc, index) => {
+                const user = doc.data()
+                usersEl.innerHTML += `
+                    <h2>${user.name}</h2>
+                    <p>${user.age}</p>
+                `
+            })
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    // getAllUsers()
+
+    // [
+    //     {
+    //         id: "kuygtfgboi",
+    //         data: function () {
+    //             return {}
+    //         }
+    //     },
+    //     {
+    //         id: "kuygtfgboi",
+    //         data: function () {
+    //             return {}
+    //         }
+    //     },
+    //     {
+    //         id: "kuygtfgboi",
+    //         data: function () {
+    //             return {}
+    //         }
+    //     },
+    // ]
+
+</script>
+
+</html>

@@ -7,6 +7,13 @@
     <title>Introduction to Firebase</title>
 </head>
 
+<style>
+    #error-message {
+        font-size: 12px;
+        color: red;
+    }
+</style>
+
 <body>
     <h1>Introduction to Firebase</h1>
     <div class="flex rounded"></div>
@@ -14,6 +21,8 @@
     <button id="test">signup</button>
     <button id="login-btn">login</button>
     <button id="logout-btn">logout</button>
+
+    <p id="error-message"></p>
 </body>
 <script type="module">
     // initializeApp: establish connection with the firebase app
@@ -45,6 +54,7 @@
     const testEl = document.getElementById("test")
     const logoutBtnEl = document.getElementById("logout-btn")
     const loginBtnEl = document.getElementById("login-btn")
+    const ErrorMessageEl = document.getElementById("error-message")
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -57,14 +67,25 @@
     const signup = async () => {
         console.log("signing up...")
         try {
-            const userCredentials = await createUserWithEmailAndPassword(auth, "peter.babs.dev@gmail.com", "Test1234.")
+            const userCredentials = await createUserWithEmailAndPassword(auth, "petser", "Test12345")
             console.log(userCredentials)
             console.log(userCredentials.user)
             if (userCredentials.user) {
                 sendEmailVerification(userCredentials.user)
+                // add to users collection
             }
         } catch (error) {
             console.log(error)
+            const errorCode = error.code
+            if (errorCode == "auth/email-already-in-use") {
+                ErrorMessageEl.textContent = "Email already exists"
+            } else if (errorCode == "auth/missing-password") {
+                ErrorMessageEl.textContent = "Password is required"
+            } else if (errorCode == "auth/invalid-email") {
+                ErrorMessageEl.textContent = "Please enter a valid email"
+            } else {
+                ErrorMessageEl.textContent = "Something went wrong"
+            }
         } finally {
             console.log("DONE!")
         }
