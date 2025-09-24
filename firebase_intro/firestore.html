@@ -10,6 +10,9 @@
 <body>
     <h1>Firebase Firestore (DATABASE)</h1>
     <button id="add-user">Add User</button>
+    <button id="update-user">Update User</button>
+    <button id="delete-user">Delete User</button>
+    <button id="set-user">Set User</button>
 
     <div id="users"></div>
 </body>
@@ -25,10 +28,11 @@
     // getDoc: get a single document
     // updateDoc: update a single document
     // deleteDoc: delete a single document
-    // setDoc: update/replace/create a document using a doc reference
+    // setDoc: replace/create a document using a doc reference
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB10RG7PzHJlchC3twXtY3mJ2N3u7RsBKE",
@@ -41,10 +45,27 @@
 
     const app = initializeApp(firebaseConfig)
     const DB = getFirestore(app)
+    const auth = getAuth(app)
     const usersColRef = collection(DB, "users")
+    // doc(userColRef, "J7JhO2Glvy89GEyvkUaZ")
 
     const adduserBtnEl = document.getElementById("add-user")
     const usersEl = document.getElementById("users")
+    const updateButtonEl = document.getElementById("update-user")
+    const deleteButtonEl = document.getElementById("delete-user")
+    const setUserButtonEl = document.getElementById("set-user")
+
+    onAuthStateChanged(auth, async (user)=>{
+        if(user){
+            console.log(user)
+            const docRef = doc(usersColRef, user.uid)
+            const docSnapShot = await getDoc(docRef)
+            const data = docSnapShot.data()
+            console.log(data)
+        }else{
+            console.log("no user")
+        }
+    })
 
     const addUser = async () => {
         console.log("adding user...")
@@ -60,7 +81,8 @@
     }
 
     adduserBtnEl.addEventListener("click", addUser)
-
+    
+    
     const getAllUsers = async () => {
         console.log("Fetching users...")
         try {
@@ -69,7 +91,7 @@
             querySnapShot.forEach((doc, index) => {
                 const user = doc.data()
                 usersEl.innerHTML += `
-                    <h2>${user.name}</h2>
+                <h2>${user.name}</h2>
                     <p>${user.age}</p>
                 `
             })
@@ -79,9 +101,75 @@
             console.log("DONE!")
         }
     }
-
     // getAllUsers()
 
+    
+    // FIRESTORE DAY 2
+    const getSingleUser = async () => {
+        console.log("FETCHING SINGLE USER....")
+        try {
+            // create doc reference for the user
+            const docRef = doc(usersColRef, "J7JhO2Glvy89GEyvkUaZ")
+            const docSnapShot = await getDoc(docRef)
+            console.log(docSnapShot.id)
+            const user = docSnapShot.data()
+            console.log(user)
+            
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    // getSingleUser()
+
+    // UPDATE DOCUMENT
+    const updateUser = async () => {
+        console.log("updating user...")
+        try {
+            const documentRef = doc(usersColRef, "J7JhO2Glvy89GEyvkUaZ")
+            await updateDoc(documentRef, { email: "newemail@dev.comss", gender: "male", age: 89, address: "Nigeria" })
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+    
+ 
+    // updateButtonEl.addEventListener("click", updateUser)
+    
+    const deleteUser = async () => {
+        console.log("deleting user...")
+        try {
+            const documentRef = doc(usersColRef, "AOhydvsX9bpantOVRW1b")
+            await deleteDoc(documentRef)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    // deleteButtonEl.addEventListener("click", deleteUser)
+    
+    const setUser = async ()=>{
+        console.log("setting user...")
+        try {
+            const docRef = doc(usersColRef, "45663636363663636363636636")
+            const data = await setDoc(docRef, {age: 78})
+        } catch (error) {
+            console.log(error)
+        } finally{
+            console.log("DONE!")
+        }
+    }
+    
+    // setUserButtonEl.addEventListener("click", setUser)
+    
+    // querySnapShot [documentSnapShot]
+    
     // [
     //     {
     //         id: "kuygtfgboi",

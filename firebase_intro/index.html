@@ -36,7 +36,7 @@
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js"
-    // import { getFirestore } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js"
+    import { getFirestore, doc, setDoc, collection } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js"
 
     const firebaseConfig = {
         apiKey: "AIzaSyB10RG7PzHJlchC3twXtY3mJ2N3u7RsBKE",
@@ -49,6 +49,8 @@
 
     const app = initializeApp(firebaseConfig)
     const auth = getAuth(app)
+    const DB = getFirestore(app)
+    const userColRef = collection(DB, "users")
 
     // ELEMENTS
     const testEl = document.getElementById("test")
@@ -64,14 +66,23 @@
         }
     })
 
+    const userData = {
+        name: "john",
+        email: "john@gmails.com",
+        password: "Test1234.",
+        gender: "male"
+    }
+
     const signup = async () => {
         console.log("signing up...")
         try {
-            const userCredentials = await createUserWithEmailAndPassword(auth, "petser", "Test12345")
-            console.log(userCredentials)
+            const userCredentials = await createUserWithEmailAndPassword(auth, userData.email, userData.password)
+
             console.log(userCredentials.user)
             if (userCredentials.user) {
                 sendEmailVerification(userCredentials.user)
+                const newUserDocRef = doc(userColRef, userCredentials.user.uid)
+                setDoc(newUserDocRef, { email: userData.email, name: userData.name, gender: userData.gender })
                 // add to users collection
             }
         } catch (error) {
