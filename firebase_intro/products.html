@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Products</title>
+</head>
+
+<body>
+    <h1>Instagram Products</h1>
+
+    <button id="add-to-cart">Add To Cart</button>
+
+    <input type="file" name="" id="image">
+</body>
+
+<script type="module">
+
+
+
+    // root-level collection
+    // sub-collections
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-ai.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB10RG7PzHJlchC3twXtY3mJ2N3u7RsBKE",
+        authDomain: "instagram-7b2d4.firebaseapp.com",
+        projectId: "instagram-7b2d4",
+        storageBucket: "instagram-7b2d4.firebasestorage.app",
+        messagingSenderId: "407362630532",
+        appId: "1:407362630532:web:4c78832c35d9a0f0f6a3d1"
+    };
+
+    const app = initializeApp(firebaseConfig)
+    const DB = getFirestore(app)
+    const ai = getAI(app, { backend: new GoogleAIBackend() });
+    const auth = getAuth(app)
+    const usersColRef = collection(DB, "users") // odd
+    const model = getGenerativeModel(ai, { model: "gemini-2.5-flash" })
+
+    const addToCartBtn = document.getElementById("add-to-cart")
+    const imageInput = document.getElementById("image")
+
+    const product = {
+        productName: "Nike shoe", price: 400,
+        images: [
+            {red: ["sjhshs","jshsj"], blue: [], mainImage: ""}
+        ], size: 45
+    }
+
+    const promptAi = async () => {
+        const prompt = "How to make 300000000 dollars without doing anything"
+        console.log("prompting...")
+        try {
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+            const text = response.text();
+            console.log(text);
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+
+    const fileToGenerativePart = async (file) => {
+        const base64EncodedDataPromise = new Promise((resolve) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result.split(',')[1]);
+            reader.readAsDataURL(file);
+        })
+
+        return {
+            inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+        };
+    }
+    // promptAi()
+    const analyzeImage = async (e) => {
+        console.log("analyzing...")
+        try {
+            const prompt = "Tell me everything you see in this image"
+            const file = e.target.files[0]
+            const imagePart = await fileToGenerativePart(file)
+            const result = await model.generateContent([prompt, imagePart])
+            const res = result.response
+            const text = await res.text()
+            console.log(text)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    imageInput.addEventListener("change", analyzeImage)
+
+
+    const addToCart = async (product, quantity = 1) => {
+        console.log("Adding to cart...")
+        const cartItem = { ...product, quantity, subTotal: product.price * quantity }
+        try {
+            const cartColRef = collection(DB, "users", "GJ9412OfOYhrsgfYjdbC", "carts")
+            const docRef = await addDoc(cartColRef, cartItem)
+            console.log(docRef)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    const getCartItems = async () => {
+        console.log("Fetching cart items...")
+        try {
+            const cartColRef = collection(DB, "users", "GJ9412OfOYhrsgfYjdbC", "carts")
+            const querySnapShot = await getDocs(cartColRef)
+            querySnapShot.forEach(doc => {
+                const cartItem = doc.data()
+                console.log(cartItem)
+                console.log(doc.id)
+            })
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    const getCartItem = async () => {
+        console.log("Fetching cart item...")
+        try {
+            const itemRef = doc(usersColRef, "GJ9412OfOYhrsgfYjdbC", "carts", "Bp8nAhcakP8uZ27bxdRP")
+            const documentSnapShot = await getDoc(itemRef)
+            console.log(documentSnapShot.data())
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    const updateCartQuantity = async (quantity) => {
+        console.log("Updating cart item...")
+        try {
+            const itemRef = doc(usersColRef, "GJ9412OfOYhrsgfYjdbC", "carts", "Bp8nAhcakP8uZ27bxdRP")
+            await updateDoc(itemRef, { quantity })
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    const removeCartItem = async (quantity) => {
+        console.log("Removing cart item...")
+        try {
+            const itemRef = doc(usersColRef, "GJ9412OfOYhrsgfYjdbC", "carts", "Bp8nAhcakP8uZ27bxdRP")
+            await deleteDoc(itemRef)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("DONE!")
+        }
+    }
+
+    // getCartItems()
+    // getCartItem()
+    // removeCartItem()
+    // updateCartQuantity(1)
+
+
+    addToCartBtn.addEventListener("click", () => {
+        addToCart(product, 3)
+
+    })
+
+
+</script>
+
+</html>
