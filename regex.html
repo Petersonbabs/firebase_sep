@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    ul {}
+
+    ul li {
+        margin: 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+
+
+    ul li span {
+        display: block;
+        height: 5px;
+        width: 5px;
+        border: 1px solid;
+        border-radius: 50%;
+    }
+</style>
+
+<body>
+
+
+    <form action="">
+
+        <input type="password" name="" id="">
+    </form>
+
+    <ul>
+        <li id="uppercase"><span></span>Password must contain uppercase</li>
+        <li id="lowercase"><span></span>Password must contain uppercase</li>
+        <li id="digit"><span></span></li>
+        <li id="special"><span></span></li>
+        <li id="numOfCharacter"><span></span></li>
+    </ul>
+
+
+    <script>
+        //         🔹 Common Regex Symbols
+
+        // Symbol	Meaning	Example	Matches
+        // .	Any character (except newline)	c.t	cat, cot, c9t
+        // ^	Start of string	^Hello	Matches "Hello" at the beginning
+        // $	End of string	world$	Matches "world" at the end
+        // *	0 or more repetitions	a*	"", a, aa, aaa
+        // +	1 or more repetitions	a+	a, aa, aaa
+        // ?	0 or 1 (optional)	colou?r	color, colour
+        // {n}	Exactly n times	\d{3}	123
+        // {n,}	At least n times	\d{2,}	12, 123, 12345
+        // {n,m}	Between n and m times	\d{2,4}	12, 123, 1234
+        // []	Character set (any one inside)	[aeiou]	Matches vowels
+        // [^ ]	Negated set (not inside)	[^0-9]	Any non-digit
+        // \d	Digit (0–9)	\d\d	42
+        // \D	Non-digit	\D+	abc, !@#
+        // \w	Word char (a-z, A-Z, 0–9, _)	\w+	hello123
+        // \W	Non-word char	\W+	!!!, @#
+        // \s	Whitespace (space, tab, newline)	\s+	" "
+        // \S	Non-whitespace	\S+	text
+        // `	`	OR	`cat
+        // ()	Grouping & capturing	(ab)+	ab, abab
+
+        // . any character
+        // ^ must start with
+        // $ must end
+
+        // const pattern = /cat/
+        // const text = "This is a cat"
+        // console.log(pattern.test(text))
+
+        // const gg = /users/
+        // const input = ""
+
+        // . any character
+        // const pattern = /p.ol/
+        // const text = "psol"
+        // console.log(pattern.test(text))
+
+        // ^ begin with
+        // const pattern = /^able/
+        // const text = "abl e Are you ?"
+        // console.log(pattern.test(text))
+        // const pattern = /^temu/
+        // const username = "temusamad"
+        // console.log(pattern.test(username))
+
+        // $ end with
+        // const pattern = /com$/
+        // const text = "shscomshs"
+        // console.log(pattern.test(text))
+
+        // const pattern = /^temu[.]com$/ // temu com
+        // const text = "temu.com"
+        // console.log(pattern.test(text))
+
+
+        // PART 2
+        // * zero of more repetitions
+        // + one or more repetitiona
+        // ? 0 or 1 (optional)
+
+
+        // * zero of more repetitions
+        // const pattern = /y*/
+        // const text = "Hello"
+        // console.log(pattern.test(text))
+
+
+        // + one or more repetitiona
+        // const pattern = /y+/
+        // const text = "Hello"
+        // console.log(pattern.test(text))
+
+        // ? 0 or 1 (optional)
+        // const pattern = /y?/
+        // const text = "Helloyyy"
+        // console.log(pattern.test(text))
+
+        // {n}	Exactly n times	\d{3}	123
+        // const pattern = /y{5}/
+        // const text = "goodbyyyyye"
+        // console.log(pattern.test(text))
+
+
+        // {n,}	At least n times	
+        // {n,m}	Between n and m times	
+        // []	Character set (any one inside)	
+        // [^ ]	Negated set (not inside)	
+        // \d	Digit (0–9)
+
+        // {n, } At least n times
+        // const pattern = /r{3,}/
+        // const text = "barrrrert"
+        // console.log(pattern.test(text))
+
+        // {n,m}	Between n and m times
+        // const pattern = /g{3,6}/
+        // const text = "Gogggggggg bolo ee hdghs"
+        // console.log(pattern.test(text))
+
+        // []	Character set (any one inside)	
+        // const pattern = /[0][789][01]/
+        // const num = "7086333333"
+        // console.log(pattern.test(num))
+
+
+        // [^ ]	Character set (any one inside)	
+        // const pattern = /^[0][^67]/
+        // const num = "0- 8989"
+        // console.log(pattern.test(num))
+
+
+        // \d Digit (0-9)
+        // const pattern = /\d/ // 0-9
+        // const num = "jhfgdc3"
+        // console.log(pattern.test(num))
+
+        // \D Non-digit
+        // const pattern = /\D/ // 0-9
+        // const num = "jhfgdc3"
+        // console.log(pattern.test(num))
+
+        // +234
+        // const pattern = /^[(+234)(080)(081)(070)(071)(090)(091)]/ // +234, 080, 090, 091, 081, 070, 071
+        // const text = "+238"
+        // console.log(pattern.test(text))
+
+        // ()	Grouping & capturing
+        // const pattern = /^(890)[635][a]{3}/
+        // const text = "8905aaaa"
+        // console.log(pattern.test(text))
+
+        // const reg = /[a-zA-Z0-9]/
+        // const uu = "09876AS56478"
+        // console.log(reg.test(uu))
+
+        // const pattern = /^[a-zA-Z][a-zA-Z0-9]{2,}[@][a-z]+[.][a-z]+$/ // test@gmail.com "alphabet/number: as many as possible" + "@" + "alphabet: as many as possible" + "." + "alphabet: as many as possible"
+        // const text = "g4ssssssss@gmail.com"
+        // console.log(pattern.test(text))
+
+        // Uppercase, lowercase, special character, digit, at least 8 characters
+
+
+        const getElement = (selector) => {
+            const element = document.querySelector(selector)
+            if (!element) {
+                console.log(`There's no element with this identifier: ${selector}`)
+                return
+            }
+            return element
+        }
+
+        const uppercaseEl = getElement("#uppercase")
+        const lowercaseEl = getElement("#lowercase")
+        const digitEl = getElement("#digit")
+        const specialEl = getElement("#special")
+        const numOfCharacter = getElement("#numOfCharacter")
+
+
+        const UppercasePasswordRegex = /[A-Z]/
+        const loawercasePasswordRegex = /[a-z]/
+        const specialCharRegex = /[@!*&%]/
+        const digitRegex = /[0-9]/
+        // const numOfChar = /{8,}/
+
+        const password = ""
+
+        uppercaseEl.style.textDecoration = UppercasePasswordRegex.test(password) ? "line-through" : ""
+
+        if (
+            UppercasePasswordRegex.test(password) && loawercasePasswordRegex.test(password) &&
+            specialCharRegex.test(password) &&
+            digitRegex.test(password) &&
+            password.length >= 8
+        ) {
+
+        } else {
+            console.log("weak pass")
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        const regex = /^[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/
+        const numberPattern = /^[0][789][01][0-9]{8}/  // 080, 070, 090 + {8 numbers}
+        const name = "bola@gmail.com"
+        const phone = '09033333333'
+
+
+        // console.log(regex.test(name))
+        // console.log(numberPattern.test(phone))
+
+    </script>
+</body>
+
+</html>
